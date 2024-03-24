@@ -2,8 +2,6 @@
 
 #include <toml++/toml.hpp>
 
-#include "Util/TOML.h"
-
 namespace
 {
     void SetSetting(RE::Setting* setting, const std::string& name, const toml::node& node)
