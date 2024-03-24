@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.28)
 
 project(
     ccld_GameSettingsOverride
-    VERSION 0.0.0
+    VERSION 1.0.0
     DESCRIPTION "SKSE Plugin that allows users to edit game settings via configuration files."
     LANGUAGES CXX
 )
