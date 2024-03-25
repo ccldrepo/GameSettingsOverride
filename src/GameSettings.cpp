@@ -4,6 +4,33 @@
 
 namespace
 {
+    std::vector<std::string> ScanDir(const std::filesystem::path& root)
+    {
+        if (!std::filesystem::exists(root)) {
+            return;
+        }
+
+        if (!std::filesystem::is_directory(root)) {
+            return;
+        }
+
+        std::vector<std::string> paths;
+        paths.reserve(8);
+        for (auto& entry : std::filesystem::directory_iterator{ root }) {
+            if (!entry.is_regular_file()) {
+                continue;
+            }
+
+            auto& path = entry.path();
+            if (path.extension().native() == L".toml"sv) {
+                paths.push_back(path.generic_string());
+            }
+        }
+
+        std::ranges::sort(paths);
+        return paths;
+    }
+
     void SetSetting(RE::Setting* setting, const std::string& name, const toml::node& node)
     {
         if (setting) {
@@ -46,7 +73,7 @@ namespace
         }
     }
 
-    void LoadFromOneFile(const std::string& path)
+    void LoadFile(const std::string& path)
     {
         auto collection = RE::GameSettingCollection::GetSingleton();
 
@@ -65,26 +92,17 @@ void GameSettings::Load()
         return;
     }
 
-    for (auto& entry : std::filesystem::directory_iterator{ root }) {
-        if (!entry.is_regular_file()) {
-            continue;
-        }
-
-        auto& path = entry.path();
-        if (path.extension().native() != L".toml"sv) {
-            continue;
-        }
-
-        auto path_str = path.generic_string();
+    auto paths = ScanDir(root);
+    for (auto& path : paths) {
         try {
-            LoadFromOneFile(path_str);
-            SKSE::log::info("Successfully loaded \"{}\".", path_str);
+            LoadFile(path);
+            SKSE::log::info("Successfully loaded \"{}\".", path);
         } catch (const toml::parse_error& e) {
-            auto msg = std::format("Failed to load \"{}\" (error occurred at line {}, column {}): {}.", path_str,
+            auto msg = std::format("Failed to load \"{}\" (error occurred at line {}, column {}): {}.", path,
                 e.source().begin.line, e.source().begin.column, e.what());
             SKSE::stl::report_and_fail(msg);
         } catch (const std::exception& e) {
-            auto msg = std::format("Failed to load \"{}\": {}.", path_str, e.what());
+            auto msg = std::format("Failed to load \"{}\": {}.", path, e.what());
             SKSE::stl::report_and_fail(msg);
         }
     }
