@@ -17,6 +17,7 @@ namespace
         *path += L".log";
 
         auto logger = spdlog::basic_logger_mt("Global", path->string(), true);
+
 #ifndef _DEBUG
         logger->set_level(spdlog::level::info);
         logger->flush_on(spdlog::level::info);
@@ -45,8 +46,7 @@ SKSEPluginLoad(const SKSE::LoadInterface* a_skse)
 {
     InitLogger();
 
-    auto os_ver = GetOsVersion();
-    if (os_ver) {
+    if (auto os_ver = GetOsVersion()) {
         SKSE::log::info("OS Version: {}", os_ver->string("."sv));
     } else {
         SKSE::log::info("OS Version: Unknown");
