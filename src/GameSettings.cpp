@@ -13,30 +13,30 @@ namespace
                     bool value = *node.value<bool>();
                     setting->data.b = value;
                     SKSE::log::info("Set {} = {}", name, value);
-                    break;
                 }
+                break;
             case toml::node_type::integer:
                 {
                     int32_t value = *node.value<int32_t>();
                     setting->data.i = value;
                     SKSE::log::info("Set {} = {}", name, value);
-                    break;
                 }
+                break;
             case toml::node_type::floating_point:
                 {
                     float value = *node.value<float>();
                     setting->data.f = value;
                     SKSE::log::info("Set {} = {}", name, value);
-                    break;
                 }
+                break;
             case toml::node_type::string:
                 {
                     // NOTE: Does this cause a memory leak£¿
                     auto free_str = new std::string{ std::move(*node.value<std::string>()) };
                     setting->data.s = free_str->data();
                     SKSE::log::info("Set {} = {}", name, *free_str);
-                    break;
                 }
+                break;
             default:
                 SKSE::log::warn("Unknown data type for {}", name);
                 break;
@@ -90,4 +90,4 @@ void GameSettings::Load()
     }
 }
 
-const std::filesystem::path GameSettings::root{ "Data/SKSE/Plugins/ccld_GameSettingsOverride"sv };
+const std::filesystem::path GameSettings::root{ "Data/SKSE/Plugins/ccld_GameSettingsOverride/"sv };
