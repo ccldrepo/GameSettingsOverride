@@ -7,10 +7,12 @@ namespace
     std::vector<std::string> ScanDir(const std::filesystem::path& root)
     {
         if (!std::filesystem::exists(root)) {
+            SKSE::log::warn("\"{}\" does not exist.", root.generic_string());
             return {};
         }
 
         if (!std::filesystem::is_directory(root)) {
+            SKSE::log::error("\"{}\" is not a directory.", root.generic_string());
             return {};
         }
 
@@ -35,7 +37,8 @@ namespace
     {
         auto setting = collection->GetSetting(name.c_str());
         if (!setting) {
-            SKSE::log::warn("Unknown setting for {}", name);
+            SKSE::log::error("Unknown setting for {}.", name);
+            return;
         }
 
         switch (node.type()) {
@@ -69,7 +72,7 @@ namespace
             }
             break;
         default:
-            SKSE::log::warn("Unknown data type for {}", name);
+            SKSE::log::error("Unknown data type for {}.", name);
             break;
         }
     }
