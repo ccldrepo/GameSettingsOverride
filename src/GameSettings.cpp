@@ -4,21 +4,21 @@
 
 namespace
 {
-    std::vector<std::string> ScanDir(const std::filesystem::path& root)
+    std::vector<std::string> ScanDir(const std::filesystem::path& a_root)
     {
-        if (!std::filesystem::exists(root)) {
-            SKSE::log::warn("\"{}\" does not exist.", root.generic_string());
+        if (!std::filesystem::exists(a_root)) {
+            SKSE::log::warn("\"{}\" does not exist.", a_root.generic_string());
             return {};
         }
 
-        if (!std::filesystem::is_directory(root)) {
-            SKSE::log::error("\"{}\" is not a directory.", root.generic_string());
+        if (!std::filesystem::is_directory(a_root)) {
+            SKSE::log::error("\"{}\" is not a directory.", a_root.generic_string());
             return {};
         }
 
         std::vector<std::string> paths;
         paths.reserve(8);
-        for (auto& entry : std::filesystem::directory_iterator{ root }) {
+        for (auto& entry : std::filesystem::directory_iterator{ a_root }) {
             if (!entry.is_regular_file()) {
                 continue;
             }
@@ -33,56 +33,56 @@ namespace
         return paths;
     }
 
-    void SetSetting(RE::GameSettingCollection* collection, const std::string& name, const toml::node& node)
+    void SetSetting(RE::GameSettingCollection* a_collection, const std::string& a_name, const toml::node& a_node)
     {
-        auto setting = collection->GetSetting(name.c_str());
+        auto setting = a_collection->GetSetting(a_name.c_str());
         if (!setting) {
-            SKSE::log::error("Unknown setting for {}.", name);
+            SKSE::log::error("Unknown setting for {}.", a_name);
             return;
         }
 
-        switch (node.type()) {
+        switch (a_node.type()) {
         case toml::node_type::boolean:
             {
-                bool value = *node.value<bool>();
+                bool value = *a_node.value<bool>();
                 setting->data.b = value;
-                SKSE::log::info("Set {} = {}", name, value);
+                SKSE::log::info("Set {} = {}", a_name, value);
             }
             break;
         case toml::node_type::integer:
             {
-                int32_t value = *node.value<int32_t>();
+                int32_t value = *a_node.value<int32_t>();
                 setting->data.i = value;
-                SKSE::log::info("Set {} = {}", name, value);
+                SKSE::log::info("Set {} = {}", a_name, value);
             }
             break;
         case toml::node_type::floating_point:
             {
-                float value = *node.value<float>();
+                float value = *a_node.value<float>();
                 setting->data.f = value;
-                SKSE::log::info("Set {} = {}", name, value);
+                SKSE::log::info("Set {} = {}", a_name, value);
             }
             break;
         case toml::node_type::string:
             {
                 // NOTE: Does this cause a memory leak£¿
-                auto free_str = new std::string{ std::move(*node.value<std::string>()) };
+                auto free_str = new std::string{ std::move(*a_node.value<std::string>()) };
                 setting->data.s = free_str->data();
-                SKSE::log::info("Set {} = {}", name, *free_str);
+                SKSE::log::info("Set {} = {}", a_name, *free_str);
             }
             break;
         default:
-            SKSE::log::error("Unknown data type for {}.", name);
+            SKSE::log::error("Unknown data type for {}.", a_name);
             break;
         }
     }
 
-    void LoadFile(RE::GameSettingCollection* collection, const std::string& path)
+    void LoadFile(RE::GameSettingCollection* a_collection, const std::string& a_path)
     {
-        auto data = toml::parse_file(path);
+        auto data = toml::parse_file(a_path);
         for (auto& [key, value] : data) {
             std::string name{ key.str() };
-            SetSetting(collection, name, value);
+            SetSetting(a_collection, name, value);
         }
     }
 }
