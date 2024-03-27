@@ -60,7 +60,7 @@ namespace
             {
                 float value = *a_node.value<float>();
                 setting->data.f = value;
-                SKSE::log::info("Set {} = {}", a_name, value);
+                SKSE::log::info("Set {} = {:.6f}", a_name, value);
             }
             break;
         case toml::node_type::string:
