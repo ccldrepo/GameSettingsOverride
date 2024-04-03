@@ -2,16 +2,20 @@
 
 #include <Windows.h>
 
-using RtlGetVersionFuncPtr = NTSTATUS(WINAPI*)(PRTL_OSVERSIONINFOEXW);
+void* _GetModuleFunc(const wchar_t* a_moduleName, const char* a_funcName) noexcept
+{
+    HMODULE hModule = GetModuleHandleW(a_moduleName);
+    if (!hModule) {
+        return nullptr;
+    }
+    return GetProcAddress(hModule, a_funcName);
+}
 
 std::optional<OsVersion> GetOsVersion() noexcept
 {
-    HMODULE hNtdll = GetModuleHandleW(L"ntdll.dll");
-    if (!hNtdll) {
-        return std::nullopt;
-    }
+    using RtlGetVersionFuncPtr = NTSTATUS(WINAPI*)(PRTL_OSVERSIONINFOEXW);
 
-    auto RtlGetVersion = reinterpret_cast<RtlGetVersionFuncPtr>(GetProcAddress(hNtdll, "RtlGetVersion"));
+    auto RtlGetVersion = GetModuleFunc<RtlGetVersionFuncPtr>(L"ntdll.dll", "RtlGetVersion");
     if (!RtlGetVersion) {
         return std::nullopt;
     }

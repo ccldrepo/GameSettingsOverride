@@ -17,7 +17,6 @@ namespace
         *path += L".log";
 
         auto logger = spdlog::basic_logger_mt("Global", path->string(), true);
-
 #ifndef _DEBUG
         logger->set_level(spdlog::level::info);
         logger->flush_on(spdlog::level::info);

@@ -34,6 +34,8 @@
 
 #include <RE/Skyrim.h>
 #include <REL/Relocation.h>
+#include <REX/PS4.h>
+#include <REX/W32.h>
 #include <SKSE/SKSE.h>
 
 #include <fmt/core.h>
