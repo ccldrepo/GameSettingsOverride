@@ -1,6 +1,6 @@
 # Game Settings Override
 
-SKSE Plugin that allows users to edit game settings via configuration files.
+SKSE plugin that allows users to modify game settings via configuration files.
 
 ## Build Requirements
 
