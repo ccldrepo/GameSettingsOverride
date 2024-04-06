@@ -14,7 +14,7 @@ namespace
             SKSE::stl::report_and_fail("Failed to find SKSE logging directory."sv);
         }
         *path /= SKSE::PluginDeclaration::GetSingleton()->GetName();
-        *path += L".log";
+        *path += L".log"sv;
 
         auto logger = spdlog::basic_logger_mt("Global", path->string(), true);
 #ifndef _DEBUG
