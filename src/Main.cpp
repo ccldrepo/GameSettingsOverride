@@ -21,8 +21,8 @@ namespace
         logger->set_level(spdlog::level::info);
         logger->flush_on(spdlog::level::info);
 #else
-        logger->set_level(spdlog::level::debug);
-        logger->flush_on(spdlog::level::debug);
+        logger->set_level(spdlog::level::trace);
+        logger->flush_on(spdlog::level::trace);
 #endif
 
         spdlog::set_default_logger(std::move(logger));
@@ -50,7 +50,6 @@ SKSEPluginLoad(const SKSE::LoadInterface* a_skse)
     } else {
         SKSE::log::info("OS Version: Unknown");
     }
-
     SKSE::log::info("Game Version: {}", a_skse->RuntimeVersion().string("."sv));
 
     auto plugin = SKSE::PluginDeclaration::GetSingleton();
