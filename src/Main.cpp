@@ -16,7 +16,7 @@ namespace
         *path /= SKSE::PluginDeclaration::GetSingleton()->GetName();
         *path += L".log"sv;
 
-        auto logger = spdlog::basic_logger_mt("Global", path->string(), true);
+        auto logger = spdlog::basic_logger_mt("Global", PathToStr(*path), true);
 #ifndef _DEBUG
         logger->set_level(spdlog::level::info);
         logger->flush_on(spdlog::level::info);

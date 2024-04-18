@@ -2,21 +2,23 @@
 
 #include <toml++/toml.hpp>
 
+#include "Util/TOML.h"
+
 namespace
 {
-    std::vector<std::string> ScanDir(const std::filesystem::path& a_root)
+    std::vector<std::filesystem::path> ScanDir(const std::filesystem::path& a_root)
     {
         if (!std::filesystem::exists(a_root)) {
-            SKSE::log::warn("\"{}\" does not exist.", a_root.generic_string());
+            SKSE::log::warn("\"{}\" does not exist.", PathToStr(a_root));
             return {};
         }
 
         if (!std::filesystem::is_directory(a_root)) {
-            SKSE::log::error("\"{}\" is not a directory.", a_root.generic_string());
+            SKSE::log::error("\"{}\" is not a directory.", PathToStr(a_root));
             return {};
         }
 
-        std::vector<std::string> paths;
+        std::vector<std::filesystem::path> paths;
         paths.reserve(8);
         for (auto& entry : std::filesystem::directory_iterator{ a_root }) {
             if (!entry.is_regular_file()) {
@@ -25,7 +27,7 @@ namespace
 
             auto& path = entry.path();
             if (path.extension().native() == L".toml"sv) {
-                paths.push_back(path.generic_string());
+                paths.push_back(path);
             }
         }
 
@@ -65,7 +67,7 @@ namespace
             break;
         case toml::node_type::string:
             {
-                // NOTE: Does this cause a memory leak£¿
+                // NOTE: Does this cause a memory leak?
                 auto free_str = new std::string{ std::move(*a_node.value<std::string>()) };
                 setting->data.s = free_str->data();
                 SKSE::log::info("Set {} = {}", a_name, *free_str);
@@ -77,9 +79,9 @@ namespace
         }
     }
 
-    void LoadFile(RE::GameSettingCollection* a_collection, const std::string& a_path)
+    void LoadFile(RE::GameSettingCollection* a_collection, const std::filesystem::path& a_path)
     {
-        auto data = toml::parse_file(a_path);
+        auto data = LoadTOMLFile(a_path);
         for (auto& [key, value] : data) {
             std::string name{ key.str() };
             SetSetting(a_collection, name, value);
@@ -94,16 +96,14 @@ void GameSettings::Load()
     for (auto& path : paths) {
         try {
             LoadFile(collection, path);
-            SKSE::log::info("Successfully loaded \"{}\".", path);
+            SKSE::log::info("Successfully loaded \"{}\".", PathToStr(path));
         } catch (const toml::parse_error& e) {
-            auto msg = std::format("Failed to load \"{}\" (error occurred at line {}, column {}): {}.", path,
+            auto msg = std::format("Failed to load \"{}\" (error occurred at line {}, column {}): {}.", PathToStr(path),
                 e.source().begin.line, e.source().begin.column, e.what());
             SKSE::stl::report_and_fail(msg);
         } catch (const std::exception& e) {
-            auto msg = std::format("Failed to load \"{}\": {}.", path, e.what());
+            auto msg = std::format("Failed to load \"{}\": {}.", PathToStr(path), e.what());
             SKSE::stl::report_and_fail(msg);
         }
     }
 }
-
-const std::filesystem::path GameSettings::root{ "Data/SKSE/Plugins/ccld_GameSettingsOverride/"sv };

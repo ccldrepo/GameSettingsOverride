@@ -7,5 +7,5 @@ class GameSettings
 public:
     static void Load();
 
-    static const std::filesystem::path root;
+    static inline const std::filesystem::path root{ L"Data/SKSE/Plugins/ccld_GameSettingsOverride/"sv };
 };
