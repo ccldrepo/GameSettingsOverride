@@ -1,6 +1,13 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Iterator
+
+
+def glob(dirpaths: list[Path], patterns: list[str]) -> Iterator[Path]:
+    for dirpath in dirpaths:
+        for pattern in patterns:
+            yield from dirpath.rglob(pattern)
 
 
 def write_cmake_list(path: Path, name: str, strings: list[str]) -> None:
@@ -15,13 +22,18 @@ def main() -> None:
     root = Path(__file__).parents[1]
     cmake_dir = root / "cmake"
     src_dir = root / "src"
+    vendor_dir = root / "vendor"
 
-    headerlist = [p.relative_to(root).as_posix() for p in src_dir.rglob("*.h")]
-    headerlist.sort()
+    headerlist = sorted(
+        p.relative_to(root).as_posix()
+        for p in glob([src_dir, vendor_dir], ["*.h", "*.hpp"])
+    )
     write_cmake_list(cmake_dir / "headerlist.cmake", "headers", headerlist)
 
-    sourcelist = [p.relative_to(root).as_posix() for p in src_dir.rglob("*.cpp")]
-    sourcelist.sort()
+    sourcelist = sorted(
+        p.relative_to(root).as_posix()
+        for p in glob([src_dir, vendor_dir], ["*.c", "*.cpp"])
+    )
     write_cmake_list(cmake_dir / "sourcelist.cmake", "sources", sourcelist)
 
 
