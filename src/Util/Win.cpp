@@ -20,7 +20,7 @@ std::optional<OsVersion> GetOsVersion() noexcept
         return std::nullopt;
     }
 
-    RTL_OSVERSIONINFOEXW ovi;
+    RTL_OSVERSIONINFOEXW ovi{};
     ovi.dwOSVersionInfoSize = sizeof(ovi);
     if (RtlGetVersion(&ovi) != 0) {
         return std::nullopt;
