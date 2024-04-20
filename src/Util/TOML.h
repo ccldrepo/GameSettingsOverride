@@ -1,7 +1,11 @@
 #pragma once
 
+#include <filesystem>
 #include <format>
+#include <fstream>
+#include <ios>
 #include <stdexcept>
+#include <string>
 #include <string_view>
 #include <type_traits>
 #include <utility>
@@ -35,6 +39,10 @@ inline toml::table LoadTOMLFile(const std::filesystem::path& a_path)
     return toml::parse(doc, a_path.native());
 }
 
+inline toml::table LoadTOMLFile(const std::string& a_path) = delete;
+inline toml::table LoadTOMLFile(std::string_view a_path) = delete;
+inline toml::table LoadTOMLFile(const char* a_path) = delete;
+
 inline void SaveTOMLFile(const std::filesystem::path& a_path, const toml::table& a_table)
 {
     if (std::ofstream file{ a_path }) {
@@ -43,6 +51,10 @@ inline void SaveTOMLFile(const std::filesystem::path& a_path, const toml::table&
         throw TOMLError("File could not be opened for writing");
     }
 }
+
+inline void SaveTOMLFile(const std::string& a_path, const toml::table& a_table) = delete;
+inline void SaveTOMLFile(std::string_view a_path, const toml::table& a_table) = delete;
+inline void SaveTOMLFile(const char* a_path, const toml::table& a_table) = delete;
 
 template <TOMLScalar T>
 inline void LoadTOMLValue(const toml::table& a_table, std::string_view a_key, T& a_target)
