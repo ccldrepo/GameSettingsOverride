@@ -25,8 +25,7 @@ namespace
                 continue;
             }
 
-            auto& path = entry.path();
-            if (path.extension().native() == L".toml"sv) {
+            if (auto& path = entry.path(); path.extension().native() == L".toml"sv) {
                 paths.push_back(path);
             }
         }
@@ -79,7 +78,7 @@ namespace
         }
     }
 
-    void LoadFile(RE::GameSettingCollection* a_collection, const std::filesystem::path& a_path)
+    void LoadFile(const std::filesystem::path& a_path, RE::GameSettingCollection* a_collection)
     {
         auto data = LoadTOMLFile(a_path);
         for (auto& [key, value] : data) {
@@ -92,10 +91,9 @@ namespace
 void GameSettings::Load()
 {
     auto collection = RE::GameSettingCollection::GetSingleton();
-    auto paths = ScanDir(root);
-    for (auto& path : paths) {
+    for (auto& path : ScanDir(root)) {
         try {
-            LoadFile(collection, path);
+            LoadFile(path, collection);
             SKSE::log::info("Successfully loaded \"{}\".", PathToStr(path));
         } catch (const toml::parse_error& e) {
             auto msg = std::format("Failed to load \"{}\" (error occurred at line {}, column {}): {}.", PathToStr(path),
