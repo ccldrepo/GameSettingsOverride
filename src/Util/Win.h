@@ -23,14 +23,14 @@ struct OsVersion
         major(a_major), minor(a_minor), build(a_build)
     {}
 
-    std::string string(std::string_view a_sep) const
+    std::string string(std::string_view a_separator) const
     {
-        return std::format("{}{}{}{}{}", major, a_sep, minor, a_sep, build);
+        return std::format("{}{}{}{}{}", major, a_separator, minor, a_separator, build);
     }
 
-    std::wstring wstring(std::wstring_view a_sep) const
+    std::wstring wstring(std::wstring_view a_separator) const
     {
-        return std::format(L"{}{}{}{}{}", major, a_sep, minor, a_sep, build);
+        return std::format(L"{}{}{}{}{}", major, a_separator, minor, a_separator, build);
     }
 
     std::uint32_t major;

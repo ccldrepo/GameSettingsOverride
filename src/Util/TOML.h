@@ -24,7 +24,7 @@ public:
 
 inline toml::table LoadTOMLFile(const std::filesystem::path& a_path)
 {
-    auto size = std::filesystem::file_size(a_path);
+    const auto size = std::filesystem::file_size(a_path);
 
     std::vector<char> buffer;
     buffer.resize(static_cast<std::vector<char>::size_type>(size));
