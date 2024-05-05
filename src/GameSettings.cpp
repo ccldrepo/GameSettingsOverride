@@ -45,6 +45,9 @@ namespace
         switch (a_node.type()) {
         case toml::node_type::boolean:
             {
+                if (!a_name.starts_with("b"sv)) {
+                    SKSE::log::warn("{} is recognized as bool, but it not starts with 'b'.", a_name);
+                }
                 bool value = *a_node.value<bool>();
                 setting->data.b = value;
                 SKSE::log::info("Set {} = {}", a_name, value);
@@ -52,6 +55,9 @@ namespace
             break;
         case toml::node_type::integer:
             {
+                if (!a_name.starts_with("i"sv)) {
+                    SKSE::log::warn("{} is recognized as integer, but it not starts with 'i'.", a_name);
+                }
                 int32_t value = *a_node.value<int32_t>();
                 setting->data.i = value;
                 SKSE::log::info("Set {} = {}", a_name, value);
@@ -59,6 +65,9 @@ namespace
             break;
         case toml::node_type::floating_point:
             {
+                if (!a_name.starts_with("f"sv)) {
+                    SKSE::log::warn("{} is recognized as float, but it not starts with 'f'.", a_name);
+                }
                 float value = *a_node.value<float>();
                 setting->data.f = value;
                 SKSE::log::info("Set {} = {:.6f}", a_name, value);
@@ -66,6 +75,9 @@ namespace
             break;
         case toml::node_type::string:
             {
+                if (!a_name.starts_with("s"sv)) {
+                    SKSE::log::warn("{} is recognized as string, but it not starts with 's'.", a_name);
+                }
                 // NOTE: Does this cause a memory leak?
                 auto free_str = new std::string{ std::move(*a_node.value<std::string>()) };
                 setting->data.s = free_str->data();
