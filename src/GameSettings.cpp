@@ -20,12 +20,12 @@ namespace
 
         std::vector<std::filesystem::path> paths;
         paths.reserve(8);
-        for (auto& entry : std::filesystem::directory_iterator{ a_root }) {
+        for (const auto& entry : std::filesystem::directory_iterator{ a_root }) {
             if (!entry.is_regular_file()) {
                 continue;
             }
 
-            if (auto& path = entry.path(); path.extension().native() == L".toml"sv) {
+            if (const auto& path = entry.path(); path.extension().native() == L".toml"sv) {
                 paths.push_back(path);
             }
         }
@@ -105,6 +105,7 @@ void GameSettings::Load()
     auto collection = RE::GameSettingCollection::GetSingleton();
     for (auto& path : ScanDir(root)) {
         try {
+            SKSE::log::info("Loading \"{}\"...", PathToStr(path));
             LoadFile(path, collection);
             SKSE::log::info("Successfully loaded \"{}\".", PathToStr(path));
         } catch (const toml::parse_error& e) {
