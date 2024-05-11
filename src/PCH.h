@@ -58,23 +58,17 @@
 #include <REX/W32.h>
 #include <SKSE/SKSE.h>
 
+#include <fmt/chrono.h>
 #include <fmt/core.h>
 #include <fmt/format.h>
 #include <fmt/ranges.h>
-
 #include <spdlog/spdlog.h>
 
 using namespace std::literals::string_view_literals;
 
 namespace SKSE::stl
 {
-    inline void log_success(const std::string& a_msg, std::source_location a_loc = std::source_location::current())
-    {
-        spdlog::log(spdlog::source_loc{ a_loc.file_name(), static_cast<int>(a_loc.line()), a_loc.function_name() },
-            spdlog::level::info, a_msg);
-    }
-
-    [[noreturn]] inline void log_failure(const std::string& a_msg, bool a_abort,
+    [[noreturn]] inline void report_fatal_error(const std::string& a_msg, bool a_abort,
         std::source_location a_loc = std::source_location::current())
     {
         // Abort or throw when error occurred.
