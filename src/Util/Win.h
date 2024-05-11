@@ -1,5 +1,6 @@
 #pragma once
 
+#include <compare>
 #include <cstdint>
 #include <format>
 #include <optional>
@@ -7,35 +8,44 @@
 #include <string_view>
 #include <type_traits>
 
-void* _GetModuleFunc(const wchar_t* a_moduleName, const char* a_funcName) noexcept;
+[[nodiscard]] void* _GetModuleFunc(const wchar_t* a_moduleName, const char* a_funcName) noexcept;
 
 template <class T>
     requires(std::is_pointer_v<T> && std::is_function_v<std::remove_pointer_t<T>>)
-inline T GetModuleFunc(const wchar_t* a_moduleName, const char* a_funcName) noexcept
+[[nodiscard]] inline T GetModuleFunc(const wchar_t* a_moduleName, const char* a_funcName) noexcept
 {
     return reinterpret_cast<T>(_GetModuleFunc(a_moduleName, a_funcName));
 }
 
 // The version of Windows operating system.
-struct OsVersion
+class OsVersion
 {
+public:
     constexpr OsVersion(std::uint32_t a_major, std::uint32_t a_minor, std::uint32_t a_build) noexcept :
-        major(a_major), minor(a_minor), build(a_build)
+        _major(a_major), _minor(a_minor), _build(a_build)
     {}
 
-    std::string string(std::string_view a_separator) const
+    [[nodiscard]] constexpr std::uint32_t major() const noexcept { return _major; }
+    [[nodiscard]] constexpr std::uint32_t minor() const noexcept { return _minor; }
+    [[nodiscard]] constexpr std::uint32_t build() const noexcept { return _build; }
+
+    [[nodiscard]] std::string string(std::string_view a_separator) const
     {
-        return std::format("{}{}{}{}{}", major, a_separator, minor, a_separator, build);
+        return std::format("{1}{0}{2}{0}{3}", a_separator, _major, _minor, _build);
     }
 
-    std::wstring wstring(std::wstring_view a_separator) const
+    [[nodiscard]] std::wstring wstring(std::wstring_view a_separator) const
     {
-        return std::format(L"{}{}{}{}{}", major, a_separator, minor, a_separator, build);
+        return std::format(L"{1}{0}{2}{0}{3}", a_separator, _major, _minor, _build);
     }
 
-    std::uint32_t major;
-    std::uint32_t minor;
-    std::uint32_t build;
+    friend bool operator==(const OsVersion&, const OsVersion&) = default;
+    friend auto operator<=>(const OsVersion&, const OsVersion&) = default;
+
+private:
+    std::uint32_t _major;
+    std::uint32_t _minor;
+    std::uint32_t _build;
 };
 
-std::optional<OsVersion> GetOsVersion() noexcept;
+[[nodiscard]] std::optional<OsVersion> GetOsVersion() noexcept;

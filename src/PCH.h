@@ -68,43 +68,27 @@ using namespace std::literals::string_view_literals;
 
 namespace SKSE::stl
 {
-    class log_message
-    {
-    public:
-        explicit log_message(std::string a_msg) : msg(std::move(a_msg)) {}
-
-        const std::string& string() const noexcept { return msg; }
-        const char*        c_str() const noexcept { return msg.c_str(); }
-        std::size_t        size() const noexcept { return msg.size(); }
-
-    private:
-        std::string msg;
-    };
-
-    inline void log_success(std::string a_msg, bool a_throw,
-        std::source_location a_loc = std::source_location::current())
+    inline void log_success(const std::string& a_msg, std::source_location a_loc = std::source_location::current())
     {
         spdlog::log(spdlog::source_loc{ a_loc.file_name(), static_cast<int>(a_loc.line()), a_loc.function_name() },
             spdlog::level::info, a_msg);
-        if (a_throw) {
-            throw SKSE::stl::log_message(std::move(a_msg));
-        }
     }
 
-    [[noreturn]] inline void log_failure(std::string a_msg, bool a_throw,
+    [[noreturn]] inline void log_failure(const std::string& a_msg, bool a_abort,
         std::source_location a_loc = std::source_location::current())
     {
-        if (!a_throw) {
+        // Abort or throw when error occurred.
+        if (a_abort) {
             SKSE::stl::report_and_fail(a_msg, a_loc);
         } else {
             spdlog::log(spdlog::source_loc{ a_loc.file_name(), static_cast<int>(a_loc.line()), a_loc.function_name() },
                 spdlog::level::err, a_msg);
-            throw SKSE::stl::log_message(std::move(a_msg));
+            throw std::runtime_error(a_msg);
         }
     }
 }
 
-inline std::filesystem::path StrToPath(std::string_view a_str)
+[[nodiscard]] inline std::filesystem::path StrToPath(std::string_view a_str)
 {
     auto wstr = SKSE::stl::utf8_to_utf16(a_str);
     if (!wstr) {
@@ -113,7 +97,7 @@ inline std::filesystem::path StrToPath(std::string_view a_str)
     return std::filesystem::path{ *std::move(wstr) };
 }
 
-inline std::string PathToStr(const std::filesystem::path& a_path)
+[[nodiscard]] inline std::string PathToStr(const std::filesystem::path& a_path)
 {
     auto str = SKSE::stl::utf16_to_utf8(a_path.native());
     if (!str) {

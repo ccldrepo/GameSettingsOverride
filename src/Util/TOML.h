@@ -22,7 +22,7 @@ public:
     using std::runtime_error::runtime_error;
 };
 
-inline toml::table LoadTOMLFile(const std::filesystem::path& a_path)
+[[nodiscard]] inline toml::table LoadTOMLFile(const std::filesystem::path& a_path)
 {
     const auto size = std::filesystem::file_size(a_path);
 
@@ -39,9 +39,9 @@ inline toml::table LoadTOMLFile(const std::filesystem::path& a_path)
     return toml::parse(doc, a_path.native());
 }
 
-inline toml::table LoadTOMLFile(const std::string& a_path) = delete;
-inline toml::table LoadTOMLFile(std::string_view a_path) = delete;
-inline toml::table LoadTOMLFile(const char* a_path) = delete;
+[[nodiscard]] inline toml::table LoadTOMLFile(const std::string& a_path) = delete;
+[[nodiscard]] inline toml::table LoadTOMLFile(std::string_view a_path) = delete;
+[[nodiscard]] inline toml::table LoadTOMLFile(const char* a_path) = delete;
 
 inline void SaveTOMLFile(const std::filesystem::path& a_path, const toml::table& a_table)
 {
