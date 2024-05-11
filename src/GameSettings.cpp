@@ -100,10 +100,9 @@ namespace
     }
 }
 
-void GameSettings::Load()
+void GameSettings::Load(bool a_abort)
 {
-    auto collection = RE::GameSettingCollection::GetSingleton();
-    for (auto& path : ScanDir(root)) {
+    for (auto collection = RE::GameSettingCollection::GetSingleton(); const auto& path : ScanDir(root)) {
         try {
             SKSE::log::info("Loading \"{}\"...", PathToStr(path));
             LoadFile(path, collection);
@@ -111,10 +110,10 @@ void GameSettings::Load()
         } catch (const toml::parse_error& e) {
             auto msg = std::format("Failed to load \"{}\" (error occurred at line {}, column {}): {}.", PathToStr(path),
                 e.source().begin.line, e.source().begin.column, e.what());
-            SKSE::stl::report_and_fail(msg);
+            SKSE::stl::report_fatal_error(msg, a_abort);
         } catch (const std::exception& e) {
             auto msg = std::format("Failed to load \"{}\": {}.", PathToStr(path), e.what());
-            SKSE::stl::report_and_fail(msg);
+            SKSE::stl::report_fatal_error(msg, a_abort);
         }
     }
 }
