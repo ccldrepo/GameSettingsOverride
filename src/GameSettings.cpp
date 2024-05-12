@@ -38,7 +38,7 @@ namespace
     {
         auto setting = a_collection->GetSetting(a_name.c_str());
         if (!setting) {
-            SKSE::log::error("Unknown setting for {}.", a_name);
+            SKSE::log::error("Unknown setting '{}'.", a_name);
             return;
         }
 
@@ -46,7 +46,7 @@ namespace
         case toml::node_type::boolean:
             {
                 if (!a_name.starts_with("b"sv)) {
-                    SKSE::log::warn("{} is recognized as bool, but it not starts with 'b'.", a_name);
+                    SKSE::log::warn("'{}' is recognized as bool, but it not starts with 'b'.", a_name);
                 }
                 bool value = *a_node.value<bool>();
                 setting->data.b = value;
@@ -56,7 +56,7 @@ namespace
         case toml::node_type::integer:
             {
                 if (!a_name.starts_with("i"sv)) {
-                    SKSE::log::warn("{} is recognized as integer, but it not starts with 'i'.", a_name);
+                    SKSE::log::warn("'{}' is recognized as integer, but it not starts with 'i'.", a_name);
                 }
                 int32_t value = *a_node.value<int32_t>();
                 setting->data.i = value;
@@ -66,7 +66,7 @@ namespace
         case toml::node_type::floating_point:
             {
                 if (!a_name.starts_with("f"sv)) {
-                    SKSE::log::warn("{} is recognized as float, but it not starts with 'f'.", a_name);
+                    SKSE::log::warn("'{}' is recognized as float, but it not starts with 'f'.", a_name);
                 }
                 float value = *a_node.value<float>();
                 setting->data.f = value;
@@ -76,7 +76,7 @@ namespace
         case toml::node_type::string:
             {
                 if (!a_name.starts_with("s"sv)) {
-                    SKSE::log::warn("{} is recognized as string, but it not starts with 's'.", a_name);
+                    SKSE::log::warn("'{}' is recognized as string, but it not starts with 's'.", a_name);
                 }
                 // NOTE: Does this cause a memory leak?
                 auto free_str = new std::string{ std::move(*a_node.value<std::string>()) };
@@ -85,7 +85,7 @@ namespace
             }
             break;
         default:
-            SKSE::log::error("Unknown data type for {}.", a_name);
+            SKSE::log::error("Unknown data type for setting '{}'.", a_name);
             break;
         }
     }
