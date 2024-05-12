@@ -1,0 +1,3 @@
+dll = "ccld_GameSettingsOverride.dll"
+api = "ReloadConfig"
+type = "MessageBox"
