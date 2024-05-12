@@ -6,7 +6,7 @@
 
 namespace
 {
-    std::vector<std::filesystem::path> ScanDir(const std::filesystem::path& a_root)
+    inline std::vector<std::filesystem::path> ScanDir(const std::filesystem::path& a_root)
     {
         if (!std::filesystem::exists(a_root)) {
             SKSE::log::warn("\"{}\" does not exist.", PathToStr(a_root));
@@ -34,7 +34,7 @@ namespace
         return paths;
     }
 
-    void SetSetting(RE::GameSettingCollection* a_collection, const std::string& a_name, const toml::node& a_node)
+    inline void SetSetting(RE::GameSettingCollection* a_collection, const std::string& a_name, const toml::node& a_node)
     {
         auto setting = a_collection->GetSetting(a_name.c_str());
         if (!setting) {
@@ -90,7 +90,7 @@ namespace
         }
     }
 
-    void LoadFile(const std::filesystem::path& a_path, RE::GameSettingCollection* a_collection)
+    inline void LoadFile(const std::filesystem::path& a_path, RE::GameSettingCollection* a_collection)
     {
         auto data = LoadTOMLFile(a_path);
         for (auto& [key, value] : data) {
