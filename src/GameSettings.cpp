@@ -92,10 +92,8 @@ namespace
 
     inline void LoadFile(const std::filesystem::path& a_path, RE::GameSettingCollection* a_collection)
     {
-        auto data = LoadTOMLFile(a_path);
-        for (auto& [key, value] : data) {
-            std::string name{ key.str() };
-            SetSetting(a_collection, name, value);
+        for (auto data = LoadTOMLFile(a_path); auto& [key, value] : data) {
+            SetSetting(a_collection, std::string{ key.str() }, value);
         }
     }
 }
