@@ -7,10 +7,8 @@ project(
     LANGUAGES CXX
 )
 
-set(BUILD_SHARED_LIBS OFF)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_INTERPROCEDURAL_OPTIMIZATION "$<$<CONFIG:Release>:ON>")
 
 configure_file(
@@ -19,7 +17,7 @@ configure_file(
     @ONLY
 )
 
-# --- Declare Sources ----------------------------------------------------------
+# -- Declare Sources -----------------------------------------------------------
 
 include(cmake/headerlist.cmake)
 include(cmake/sourcelist.cmake)
@@ -32,7 +30,7 @@ source_group(
         ${sources}
 )
 
-# --- Declare Dependencies -----------------------------------------------------
+# -- Declare Dependencies ------------------------------------------------------
 
 if(NOT CMAKE_PREFIX_PATH AND DEFINED ENV{DEV_INSTALL_PATH})
     cmake_path(SET CMAKE_PREFIX_PATH "$ENV{DEV_INSTALL_PATH}/${CMAKE_BUILD_TYPE}")
@@ -43,7 +41,7 @@ find_package(fmt REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(tomlplusplus REQUIRED)
 
-# --- Declare Targets ----------------------------------------------------------
+# -- Declare Targets -----------------------------------------------------------
 
 add_commonlibsse_plugin(
     "${PROJECT_NAME}"
@@ -70,10 +68,12 @@ if(MSVC)
     target_compile_options(
         "${PROJECT_NAME}"
         PRIVATE
+            /EHsc
             /permissive-
             /sdl
             /utf-8
             /W4
+            /Zc:__cplusplus
             /Zc:preprocessor
     )
 endif()

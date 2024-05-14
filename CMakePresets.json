@@ -5,7 +5,11 @@
     {
       "name": "Base",
       "hidden": true,
-      "generator": "Ninja"
+      "generator": "Ninja",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": "OFF",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
     },
     {
       "name": "Debug",
