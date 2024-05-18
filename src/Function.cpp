@@ -7,10 +7,11 @@
 MFMAPI void ReloadConfig(char* a_msg, std::size_t a_len)
 {
     std::ostringstream oss;
-
-    auto sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
-    sink->set_pattern("[%l] %v");
-    spdlog::default_logger_raw()->sinks().push_back(sink);
+    {
+        auto sink = std::make_shared<spdlog::sinks::ostream_sink_mt>(oss);
+        sink->set_pattern("[%l] %v");
+        spdlog::default_logger_raw()->sinks().push_back(std::move(sink));
+    }
 
     try {
         GameSettings::Load(false);
