@@ -6,6 +6,12 @@
 
 namespace
 {
+    inline RE::Color IntToColor(std::uint32_t a_int) noexcept
+    {
+        // Unpack integer to (red, green, blue, alpha).
+        return RE::Color{ (a_int >> 24) & 0xFF, (a_int >> 16) & 0xFF, (a_int >> 8) & 0xFF, a_int & 0xFF };
+    }
+
     inline std::vector<std::filesystem::path> ScanDir(const std::filesystem::path& a_root)
     {
         if (!std::filesystem::exists(a_root)) {
@@ -20,6 +26,7 @@ namespace
 
         std::vector<std::filesystem::path> paths;
         paths.reserve(8);
+
         for (const auto& entry : std::filesystem::directory_iterator{ a_root }) {
             if (!entry.is_regular_file()) {
                 continue;
@@ -75,7 +82,12 @@ namespace
             break;
         case RE::Setting::Type::kColor:
             {
-                // TODO
+                if (auto value = a_node.value<std::uint32_t>()) {
+                    setting->data.r = IntToColor(*value);
+                    SKSE::log::info("Set {} = 0x{:08X}", a_name, *value);
+                } else {
+                    SKSE::log::error("Setting '{}' should be color.", a_name);
+                }
             }
             break;
         case RE::Setting::Type::kString:
