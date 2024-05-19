@@ -130,9 +130,9 @@ void GameSettings::Load(bool a_abort)
 {
     for (auto collection = RE::GameSettingCollection::GetSingleton(); const auto& path : ScanDir(root)) {
         try {
-            SKSE::log::info("Loading \"{}\"...", PathToStr(path));
+            SKSE::log::info("\"{}\" is loading...", PathToStr(path));
             LoadFile(path, collection);
-            SKSE::log::info("Successfully loaded \"{}\".", PathToStr(path));
+            SKSE::log::info("\"{}\" has finished loading.", PathToStr(path));
         } catch (const toml::parse_error& e) {
             auto msg = std::format("Failed to load \"{}\" (error occurred at line {}, column {}): {}.", PathToStr(path),
                 e.source().begin.line, e.source().begin.column, e.what());
