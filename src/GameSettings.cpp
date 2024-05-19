@@ -42,46 +42,62 @@ namespace
             return;
         }
 
-        switch (a_node.type()) {
-        case toml::node_type::boolean:
+        switch (setting->GetType()) {
+        case RE::Setting::Type::kBool:
             {
-                if (!a_name.starts_with("b"sv)) {
-                    SKSE::log::warn("'{}' is recognized as bool, but it not starts with 'b'.", a_name);
+                if (auto value = a_node.value<bool>()) {
+                    setting->data.b = *value;
+                    SKSE::log::info("Set {} = {}", a_name, *value);
+                } else {
+                    SKSE::log::error("Setting '{}' should be bool.", a_name);
                 }
-                bool value = *a_node.value<bool>();
-                setting->data.b = value;
-                SKSE::log::info("Set {} = {}", a_name, value);
             }
             break;
-        case toml::node_type::integer:
+        case RE::Setting::Type::kFloat:
             {
-                if (!a_name.starts_with("i"sv)) {
-                    SKSE::log::warn("'{}' is recognized as integer, but it not starts with 'i'.", a_name);
+                if (auto value = a_node.value<float>()) {
+                    setting->data.f = *value;
+                    SKSE::log::info("Set {} = {:.6f}", a_name, *value);
+                } else {
+                    SKSE::log::error("Setting '{}' should be float.", a_name);
                 }
-                int32_t value = *a_node.value<int32_t>();
-                setting->data.i = value;
-                SKSE::log::info("Set {} = {}", a_name, value);
             }
             break;
-        case toml::node_type::floating_point:
+        case RE::Setting::Type::kSignedInteger:
             {
-                if (!a_name.starts_with("f"sv)) {
-                    SKSE::log::warn("'{}' is recognized as float, but it not starts with 'f'.", a_name);
+                if (auto value = a_node.value<std::int32_t>()) {
+                    setting->data.i = *value;
+                    SKSE::log::info("Set {} = {}", a_name, *value);
+                } else {
+                    SKSE::log::error("Setting '{}' should be signed integer.", a_name);
                 }
-                float value = *a_node.value<float>();
-                setting->data.f = value;
-                SKSE::log::info("Set {} = {:.6f}", a_name, value);
             }
             break;
-        case toml::node_type::string:
+        case RE::Setting::Type::kColor:
             {
-                if (!a_name.starts_with("s"sv)) {
-                    SKSE::log::warn("'{}' is recognized as string, but it not starts with 's'.", a_name);
+                // TODO
+            }
+            break;
+        case RE::Setting::Type::kString:
+            {
+                if (auto value = a_node.value<std::string>()) {
+                    // NOTE: Does this cause a memory leak?
+                    auto free_str = new std::string{ *std::move(value) };
+                    setting->data.s = free_str->data();
+                    SKSE::log::info("Set {} = {}", a_name, *free_str);
+                } else {
+                    SKSE::log::error("Setting '{}' should be string.", a_name);
                 }
-                // NOTE: Does this cause a memory leak?
-                auto free_str = new std::string{ std::move(*a_node.value<std::string>()) };
-                setting->data.s = free_str->data();
-                SKSE::log::info("Set {} = {}", a_name, *free_str);
+            }
+            break;
+        case RE::Setting::Type::kUnsignedInteger:
+            {
+                if (auto value = a_node.value<std::uint32_t>()) {
+                    setting->data.u = *value;
+                    SKSE::log::info("Set {} = {}", a_name, *value);
+                } else {
+                    SKSE::log::error("Setting '{}' should be unsigned integer.", a_name);
+                }
             }
             break;
         default:
