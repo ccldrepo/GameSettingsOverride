@@ -45,8 +45,8 @@ SKSEPluginLoad(const SKSE::LoadInterface* a_skse)
 {
     InitLogger();
 
-    if (auto os_ver = GetOsVersion()) {
-        SKSE::log::info("OS Version: {}", os_ver->string("."sv));
+    if (auto osVersion = OsVersion::Get()) {
+        SKSE::log::info("OS Version: {}", osVersion->string("."sv));
     } else {
         SKSE::log::info("OS Version: Unknown");
     }

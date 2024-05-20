@@ -11,7 +11,7 @@ void* _GetModuleFunc(const wchar_t* a_moduleName, const char* a_funcName) noexce
     return GetProcAddress(hModule, a_funcName);
 }
 
-std::optional<OsVersion> GetOsVersion() noexcept
+std::optional<OsVersion> OsVersion::Get() noexcept
 {
     using RtlGetVersionFuncPtr = NTSTATUS(WINAPI*)(PRTL_OSVERSIONINFOEXW);
 

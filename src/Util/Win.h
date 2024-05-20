@@ -21,6 +21,8 @@ template <class T>
 class OsVersion
 {
 public:
+    [[nodiscard]] static std::optional<OsVersion> Get() noexcept;
+
     constexpr OsVersion(std::uint32_t a_major, std::uint32_t a_minor, std::uint32_t a_build) noexcept :
         _major(a_major), _minor(a_minor), _build(a_build)
     {}
@@ -47,5 +49,3 @@ private:
     std::uint32_t _minor;
     std::uint32_t _build;
 };
-
-[[nodiscard]] std::optional<OsVersion> GetOsVersion() noexcept;

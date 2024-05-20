@@ -56,12 +56,16 @@ inline void SaveTOMLFile(const std::string& a_path, const toml::table& a_table) 
 inline void SaveTOMLFile(std::string_view a_path, const toml::table& a_table) = delete;
 inline void SaveTOMLFile(const char* a_path, const toml::table& a_table) = delete;
 
-template <TOMLScalar T>
+template <TOMLScalar T, bool required = false>
 inline void LoadTOMLValue(const toml::table& a_table, std::string_view a_key, T& a_target)
 {
     auto node = a_table.get(a_key);
     if (!node) {
-        return;  // Leave target unchanged.
+        if constexpr (required) {
+            throw TOMLError(std::format("'{}' is required", a_key));
+        } else {
+            return;  // Leave target unchanged.
+        }
     }
 
     auto value = node->value<T>();
@@ -72,12 +76,16 @@ inline void LoadTOMLValue(const toml::table& a_table, std::string_view a_key, T&
     a_target = std::move(*value);
 }
 
-template <TOMLScalar T>
+template <TOMLScalar T, bool required = false>
 inline void LoadTOMLValue(const toml::table& a_table, std::string_view a_key, std::vector<T>& a_target)
 {
     auto node = a_table.get(a_key);
     if (!node) {
-        return;  // Leave target unchanged.
+        if constexpr (required) {
+            throw TOMLError(std::format("'{}' is required", a_key));
+        } else {
+            return;  // Leave target unchanged.
+        }
     }
 
     auto arr = node->as_array();
@@ -96,6 +104,18 @@ inline void LoadTOMLValue(const toml::table& a_table, std::string_view a_key, st
         }
         a_target.push_back(std::move(*value));
     }
+}
+
+template <TOMLScalar T>
+inline void LoadTOMLValueRequired(const toml::table& a_table, std::string_view a_key, T& a_target)
+{
+    return LoadTOMLValue<T, true>(a_table, a_key, a_target);
+}
+
+template <TOMLScalar T>
+inline void LoadTOMLValueRequired(const toml::table& a_table, std::string_view a_key, std::vector<T>& a_target)
+{
+    return LoadTOMLValue<T, true>(a_table, a_key, a_target);
 }
 
 template <TOMLScalar T>
