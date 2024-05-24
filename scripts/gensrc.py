@@ -14,7 +14,7 @@ def write_cmake_list(path: Path, name: str, strings: list[str]) -> None:
     with open(path, "w", encoding="utf-8") as f:
         f.write(f"set({name}\n")
         for string in strings:
-            f.write(f"    {string}\n")
+            f.write(f'    "{string}"\n')
         f.write(")\n")
 
 
@@ -28,13 +28,13 @@ def main() -> None:
         p.relative_to(root).as_posix()
         for p in glob([src_dir, vendor_dir], ["*.h", "*.hpp"])
     )
-    write_cmake_list(cmake_dir / "headerlist.cmake", "headers", headerlist)
+    write_cmake_list(cmake_dir / "headerlist.cmake", "PROJECT_HEADERS", headerlist)
 
     sourcelist = sorted(
         p.relative_to(root).as_posix()
         for p in glob([src_dir, vendor_dir], ["*.c", "*.cpp"])
     )
-    write_cmake_list(cmake_dir / "sourcelist.cmake", "sources", sourcelist)
+    write_cmake_list(cmake_dir / "sourcelist.cmake", "PROJECT_SOURCES", sourcelist)
 
 
 if __name__ == "__main__":

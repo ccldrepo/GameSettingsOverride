@@ -24,10 +24,10 @@ include(cmake/sourcelist.cmake)
 
 source_group(
     TREE
-        ${CMAKE_CURRENT_SOURCE_DIR}
+        "${CMAKE_CURRENT_SOURCE_DIR}"
     FILES
-        ${headers}
-        ${sources}
+        ${PROJECT_HEADERS}
+        ${PROJECT_SOURCES}
 )
 
 # -- Declare Dependencies ------------------------------------------------------
@@ -46,8 +46,8 @@ find_package(tomlplusplus REQUIRED)
 add_commonlibsse_plugin(
     "${PROJECT_NAME}"
     SOURCES
-        ${headers}
-        ${sources}
+        ${PROJECT_HEADERS}
+        ${PROJECT_SOURCES}
         "${CMAKE_CURRENT_BINARY_DIR}/version.rc"
 )
 
@@ -95,5 +95,5 @@ target_link_libraries(
 target_precompile_headers(
     "${PROJECT_NAME}"
     PRIVATE
-        src/PCH.h
+        "src/PCH.h"
 )
