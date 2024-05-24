@@ -5,11 +5,14 @@
 #include <array>
 #include <atomic>
 #include <bit>
+#include <bitset>
 #include <cassert>
 #include <cctype>
 #include <cerrno>
+#include <cfloat>
 #include <chrono>
 #include <climits>
+#include <cmath>
 #include <compare>
 #include <concepts>
 #include <cstddef>
@@ -30,6 +33,9 @@
 #include <map>
 #include <memory>
 #include <mutex>
+#include <new>
+#include <numbers>
+#include <numeric>
 #include <optional>
 #include <ostream>
 #include <ranges>
@@ -45,6 +51,8 @@
 #include <thread>
 #include <tuple>
 #include <type_traits>
+#include <typeindex>
+#include <typeinfo>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
@@ -84,18 +92,16 @@ namespace SKSE::stl
 
 [[nodiscard]] inline std::filesystem::path StrToPath(std::string_view a_str)
 {
-    auto wstr = SKSE::stl::utf8_to_utf16(a_str);
-    if (!wstr) {
-        return {};
+    if (auto wstr = SKSE::stl::utf8_to_utf16(a_str)) {
+        return std::filesystem::path{ *std::move(wstr) };
     }
-    return std::filesystem::path{ *std::move(wstr) };
+    return {};
 }
 
 [[nodiscard]] inline std::string PathToStr(const std::filesystem::path& a_path)
 {
-    auto str = SKSE::stl::utf16_to_utf8(a_path.native());
-    if (!str) {
-        return {};
+    if (auto str = SKSE::stl::utf16_to_utf8(a_path.native())) {
+        return *std::move(str);
     }
-    return *std::move(str);
+    return {};
 }
