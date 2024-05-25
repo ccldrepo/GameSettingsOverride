@@ -4,6 +4,7 @@
 #include <format>
 #include <fstream>
 #include <ios>
+#include <memory>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -24,18 +25,16 @@ public:
 
 [[nodiscard]] inline toml::table LoadTOMLFile(const std::filesystem::path& a_path)
 {
-    const auto size = std::filesystem::file_size(a_path);
-
-    std::vector<char> buffer;
-    buffer.resize(static_cast<std::vector<char>::size_type>(size));
+    const auto size = static_cast<std::size_t>(std::filesystem::file_size(a_path));
+    const auto data = std::make_unique_for_overwrite<char[]>(size);
 
     if (std::ifstream file{ a_path, std::ios_base::in | std::ios_base::binary }) {
-        file.read(buffer.data(), static_cast<std::streamsize>(size));
+        file.read(data.get(), static_cast<std::streamsize>(size));
     } else {
         throw TOMLError("File could not be opened for reading");
     }
 
-    std::string_view doc{ buffer.data(), buffer.size() };
+    std::string_view doc{ data.get(), size };
     return toml::parse(doc, a_path.native());
 }
 
@@ -70,8 +69,7 @@ inline void LoadTOMLValue(const toml::table& a_table, std::string_view a_key, T&
 
     auto value = node->value<T>();
     if (!value) {
-        auto msg = std::format("Invalid '{}'", a_key);
-        throw TOMLError(msg);
+        throw TOMLError(std::format("Invalid '{}'", a_key));
     }
     a_target = std::move(*value);
 }
@@ -90,8 +88,7 @@ inline void LoadTOMLValue(const toml::table& a_table, std::string_view a_key, st
 
     auto arr = node->as_array();
     if (!arr) {
-        auto msg = std::format("'{}' is not an array", a_key);
-        throw TOMLError(msg);
+        throw TOMLError(std::format("'{}' is not an array", a_key));
     }
 
     a_target.clear();
@@ -99,8 +96,7 @@ inline void LoadTOMLValue(const toml::table& a_table, std::string_view a_key, st
     for (const auto& ele : *arr) {
         auto value = ele.value<T>();
         if (!value) {
-            auto msg = std::format("Invalid '{}'", a_key);
-            throw TOMLError(msg);
+            throw TOMLError(std::format("Invalid '{}'", a_key));
         }
         a_target.push_back(std::move(*value));
     }
@@ -123,8 +119,7 @@ inline void SaveTOMLValue(toml::table& a_table, std::string_view a_key, const T&
 {
     auto [pos, ok] = a_table.insert(a_key, a_source);
     if (!ok) {
-        auto msg = std::format("'{}' exists", a_key);
-        throw TOMLError(msg);
+        throw TOMLError(std::format("'{}' exists", a_key));
     }
 }
 
@@ -139,7 +134,6 @@ inline void SaveTOMLValue(toml::table& a_table, std::string_view a_key, const st
 
     auto [pos, ok] = a_table.insert(a_key, std::move(arr));
     if (!ok) {
-        auto msg = std::format("'{}' exists", a_key);
-        throw TOMLError(msg);
+        throw TOMLError(std::format("'{}' exists", a_key));
     }
 }
