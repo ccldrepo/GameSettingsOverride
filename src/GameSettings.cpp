@@ -14,12 +14,14 @@ namespace
 
     inline std::vector<std::filesystem::path> ScanDir(const std::filesystem::path& a_root)
     {
-        if (!std::filesystem::exists(a_root)) {
+        auto st = std::filesystem::status(a_root);
+
+        if (!std::filesystem::exists(st)) {
             SKSE::log::warn("\"{}\" does not exist.", PathToStr(a_root));
             return {};
         }
 
-        if (!std::filesystem::is_directory(a_root)) {
+        if (!std::filesystem::is_directory(st)) {
             SKSE::log::error("\"{}\" is not a directory.", PathToStr(a_root));
             return {};
         }
