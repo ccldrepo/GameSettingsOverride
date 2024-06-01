@@ -55,8 +55,40 @@ inline void SaveTOMLFile(const std::string& a_path, const toml::table& a_table) 
 inline void SaveTOMLFile(std::string_view a_path, const toml::table& a_table) = delete;
 inline void SaveTOMLFile(const char* a_path, const toml::table& a_table) = delete;
 
+template <bool required = false>
+[[nodiscard]] inline const toml::table* GetTOMLSection(const toml::table& a_table, std::string_view a_key)
+{
+    auto node = a_table.get(a_key);
+    if (!node) {
+        if constexpr (required) {
+            throw TOMLError(std::format("'{}' is required", a_key));
+        } else {
+            return nullptr;
+        }
+    }
+
+    auto section = node->as_table();
+    if (!section) {
+        throw TOMLError(std::format("'{}' is not a section", a_key));
+    }
+    return section;
+}
+
+[[nodiscard]] inline const toml::table* GetTOMLSectionRequired(const toml::table& a_table, std::string_view a_key)
+{
+    return GetTOMLSection<true>(a_table, a_key);
+}
+
+inline void SetTOMLSection(toml::table& a_table, std::string_view a_key, toml::table&& a_section)
+{
+    auto [pos, ok] = a_table.emplace(a_key, std::move(a_section));
+    if (!ok) {
+        throw TOMLError(std::format("'{}' exists", a_key));
+    }
+}
+
 template <TOMLScalar T, bool required = false>
-inline void LoadTOMLValue(const toml::table& a_table, std::string_view a_key, T& a_target)
+inline void GetTOMLValue(const toml::table& a_table, std::string_view a_key, T& a_target)
 {
     auto node = a_table.get(a_key);
     if (!node) {
@@ -75,7 +107,7 @@ inline void LoadTOMLValue(const toml::table& a_table, std::string_view a_key, T&
 }
 
 template <TOMLScalar T, bool required = false>
-inline void LoadTOMLValue(const toml::table& a_table, std::string_view a_key, std::vector<T>& a_target)
+inline void GetTOMLValue(const toml::table& a_table, std::string_view a_key, std::vector<T>& a_target)
 {
     auto node = a_table.get(a_key);
     if (!node) {
@@ -103,28 +135,28 @@ inline void LoadTOMLValue(const toml::table& a_table, std::string_view a_key, st
 }
 
 template <TOMLScalar T>
-inline void LoadTOMLValueRequired(const toml::table& a_table, std::string_view a_key, T& a_target)
+inline void GetTOMLValueRequired(const toml::table& a_table, std::string_view a_key, T& a_target)
 {
-    return LoadTOMLValue<T, true>(a_table, a_key, a_target);
+    return GetTOMLValue<T, true>(a_table, a_key, a_target);
 }
 
 template <TOMLScalar T>
-inline void LoadTOMLValueRequired(const toml::table& a_table, std::string_view a_key, std::vector<T>& a_target)
+inline void GetTOMLValueRequired(const toml::table& a_table, std::string_view a_key, std::vector<T>& a_target)
 {
-    return LoadTOMLValue<T, true>(a_table, a_key, a_target);
+    return GetTOMLValue<T, true>(a_table, a_key, a_target);
 }
 
 template <TOMLScalar T>
-inline void SaveTOMLValue(toml::table& a_table, std::string_view a_key, const T& a_source)
+inline void SetTOMLValue(toml::table& a_table, std::string_view a_key, const T& a_source)
 {
-    auto [pos, ok] = a_table.insert(a_key, a_source);
+    auto [pos, ok] = a_table.emplace(a_key, a_source);
     if (!ok) {
         throw TOMLError(std::format("'{}' exists", a_key));
     }
 }
 
 template <TOMLScalar T>
-inline void SaveTOMLValue(toml::table& a_table, std::string_view a_key, const std::vector<T>& a_source)
+inline void SetTOMLValue(toml::table& a_table, std::string_view a_key, const std::vector<T>& a_source)
 {
     toml::array arr;
     arr.reserve(a_source.size());
@@ -132,7 +164,7 @@ inline void SaveTOMLValue(toml::table& a_table, std::string_view a_key, const st
         arr.push_back(ele);
     }
 
-    auto [pos, ok] = a_table.insert(a_key, std::move(arr));
+    auto [pos, ok] = a_table.emplace(a_key, std::move(arr));
     if (!ok) {
         throw TOMLError(std::format("'{}' exists", a_key));
     }
