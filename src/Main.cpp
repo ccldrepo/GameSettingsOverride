@@ -1,5 +1,3 @@
-#include <PCH.h>
-
 #include <spdlog/sinks/basic_file_sink.h>
 
 #include "GameSettings.h"

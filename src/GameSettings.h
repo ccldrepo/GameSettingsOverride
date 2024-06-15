@@ -1,7 +1,5 @@
 #pragma once
 
-#include <PCH.h>
-
 class GameSettings
 {
 public:
