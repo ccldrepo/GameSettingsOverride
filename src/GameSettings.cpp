@@ -139,6 +139,10 @@ void GameSettings::Load(bool a_abort)
             auto msg = std::format("Failed to load \"{}\" (error occurred at line {}, column {}): {}.", PathToStr(path),
                 e.source().begin.line, e.source().begin.column, e.what());
             SKSE::stl::report_fatal_error(msg, a_abort);
+        } catch (const std::system_error& e) {
+            auto msg = std::format("Failed to load \"{}\": {}.", PathToStr(path),
+                SKSE::stl::ansi_to_utf8(e.what()).value_or(e.what()));
+            SKSE::stl::report_fatal_error(msg, a_abort);
         } catch (const std::exception& e) {
             auto msg = std::format("Failed to load \"{}\": {}.", PathToStr(path), e.what());
             SKSE::stl::report_fatal_error(msg, a_abort);
