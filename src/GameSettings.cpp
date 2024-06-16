@@ -58,7 +58,7 @@ namespace
                     setting->data.b = *value;
                     SKSE::log::info("Set {} = {}", a_name, *value);
                 } else {
-                    SKSE::log::error("Setting '{}' should be bool.", a_name);
+                    SKSE::log::error("Setting '{}' must be bool.", a_name);
                 }
             }
             break;
@@ -68,7 +68,7 @@ namespace
                     setting->data.f = *value;
                     SKSE::log::info("Set {} = {:.6f}", a_name, *value);
                 } else {
-                    SKSE::log::error("Setting '{}' should be float.", a_name);
+                    SKSE::log::error("Setting '{}' must be float.", a_name);
                 }
             }
             break;
@@ -78,7 +78,7 @@ namespace
                     setting->data.i = *value;
                     SKSE::log::info("Set {} = {}", a_name, *value);
                 } else {
-                    SKSE::log::error("Setting '{}' should be signed integer.", a_name);
+                    SKSE::log::error("Setting '{}' must be signed integer.", a_name);
                 }
             }
             break;
@@ -88,7 +88,7 @@ namespace
                     setting->data.r = IntToColor(*value);
                     SKSE::log::info("Set {} = 0x{:08X}", a_name, *value);
                 } else {
-                    SKSE::log::error("Setting '{}' should be color.", a_name);
+                    SKSE::log::error("Setting '{}' must be color.", a_name);
                 }
             }
             break;
@@ -100,7 +100,7 @@ namespace
                     setting->data.s = free_str->data();
                     SKSE::log::info("Set {} = {}", a_name, *free_str);
                 } else {
-                    SKSE::log::error("Setting '{}' should be string.", a_name);
+                    SKSE::log::error("Setting '{}' must be string.", a_name);
                 }
             }
             break;
@@ -110,7 +110,7 @@ namespace
                     setting->data.u = *value;
                     SKSE::log::info("Set {} = {}", a_name, *value);
                 } else {
-                    SKSE::log::error("Setting '{}' should be unsigned integer.", a_name);
+                    SKSE::log::error("Setting '{}' must be unsigned integer.", a_name);
                 }
             }
             break;
@@ -132,9 +132,11 @@ void GameSettings::Load(bool a_abort)
 {
     for (auto collection = RE::GameSettingCollection::GetSingleton(); const auto& path : ScanDir(root)) {
         try {
+            SKSE::log::info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
             SKSE::log::info("\"{}\" is loading...", PathToStr(path));
             LoadFile(path, collection);
             SKSE::log::info("\"{}\" has finished loading.", PathToStr(path));
+            SKSE::log::info("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
         } catch (const toml::parse_error& e) {
             auto msg = std::format("Failed to load \"{}\" (error occurred at line {}, column {}): {}.", PathToStr(path),
                 e.source().begin.line, e.source().begin.column, e.what());
