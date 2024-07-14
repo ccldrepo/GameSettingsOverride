@@ -22,7 +22,7 @@ namespace Win
         return reinterpret_cast<T>(Internal::GetModuleFunc(a_moduleName, a_funcName));
     }
 
-    // The version of Windows operating system.
+    /// The version of Windows operating system.
     class OsVersion
     {
     public:

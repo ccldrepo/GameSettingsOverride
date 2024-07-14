@@ -101,9 +101,26 @@ inline void GetTOMLValue(const toml::table& a_table, std::string_view a_key, T& 
 
     auto value = node->value<T>();
     if (!value) {
+        if constexpr (std::is_same_v<T, bool>) {
+            if (!node->is_boolean()) {
+                throw TOMLError(std::format("'{}' is not a bool", a_key));
+            }
+        } else if constexpr (std::is_integral_v<T>) {
+            if (!node->is_integer()) {
+                throw TOMLError(std::format("'{}' is not an integer", a_key));
+            }
+        } else if constexpr (std::is_floating_point_v<T>) {
+            if (!node->is_floating_point()) {
+                throw TOMLError(std::format("'{}' is not a float", a_key));
+            }
+        } else if constexpr (std::is_same_v<T, std::string>) {
+            if (!node->is_string()) {
+                throw TOMLError(std::format("'{}' is not a string", a_key));
+            }
+        }
         throw TOMLError(std::format("Invalid '{}'", a_key));
     }
-    a_target = std::move(*value);
+    a_target = *std::move(value);
 }
 
 template <TOMLScalar T, bool required = false>
@@ -128,9 +145,26 @@ inline void GetTOMLValue(const toml::table& a_table, std::string_view a_key, std
     for (const auto& ele : *arr) {
         auto value = ele.value<T>();
         if (!value) {
+            if constexpr (std::is_same_v<T, bool>) {
+                if (!node->is_boolean()) {
+                    throw TOMLError(std::format("'{}' is not an array of bool", a_key));
+                }
+            } else if constexpr (std::is_integral_v<T>) {
+                if (!node->is_integer()) {
+                    throw TOMLError(std::format("'{}' is not an array of integer", a_key));
+                }
+            } else if constexpr (std::is_floating_point_v<T>) {
+                if (!node->is_floating_point()) {
+                    throw TOMLError(std::format("'{}' is not an array of float", a_key));
+                }
+            } else if constexpr (std::is_same_v<T, std::string>) {
+                if (!node->is_string()) {
+                    throw TOMLError(std::format("'{}' is not an array of string", a_key));
+                }
+            }
             throw TOMLError(std::format("Invalid '{}'", a_key));
         }
-        a_target.push_back(std::move(*value));
+        a_target.push_back(*std::move(value));
     }
 }
 
