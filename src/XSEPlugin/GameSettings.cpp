@@ -2,7 +2,7 @@
 
 #include <toml++/toml.hpp>
 
-#include "Util/TOML.h"
+#include <XSEPlugin/Util/TOML.h>
 
 namespace
 {

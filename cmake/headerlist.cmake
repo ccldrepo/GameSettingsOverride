@@ -1,8 +1,8 @@
 set(PROJECT_HEADERS
-    "src/Function.h"
-    "src/GameSettings.h"
-    "src/PCH.h"
-    "src/Util/Singleton.h"
-    "src/Util/TOML.h"
-    "src/Util/Win.h"
+    "src/XSEPlugin/Function.h"
+    "src/XSEPlugin/GameSettings.h"
+    "src/XSEPlugin/PCH.h"
+    "src/XSEPlugin/Util/Singleton.h"
+    "src/XSEPlugin/Util/TOML.h"
+    "src/XSEPlugin/Util/Win.h"
 )

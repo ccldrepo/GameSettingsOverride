@@ -1,7 +1,7 @@
 #include <spdlog/sinks/basic_file_sink.h>
 
-#include "GameSettings.h"
-#include "Util/Win.h"
+#include <XSEPlugin/GameSettings.h>
+#include <XSEPlugin/Util/Win.h>
 
 namespace
 {

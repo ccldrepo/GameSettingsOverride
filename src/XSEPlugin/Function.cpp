@@ -2,7 +2,7 @@
 
 #include <spdlog/sinks/ostream_sink.h>
 
-#include "GameSettings.h"
+#include <XSEPlugin/GameSettings.h>
 
 MFMAPI void ReloadConfig(char* a_msg, std::size_t a_len)
 {

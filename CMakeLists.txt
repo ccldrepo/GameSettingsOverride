@@ -95,5 +95,5 @@ target_link_libraries(
 target_precompile_headers(
     "${PROJECT_NAME}"
     PRIVATE
-        "src/PCH.h"
+        "src/XSEPlugin/PCH.h"
 )

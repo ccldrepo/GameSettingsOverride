@@ -1,6 +1,6 @@
 set(PROJECT_SOURCES
-    "src/Function.cpp"
-    "src/GameSettings.cpp"
-    "src/Main.cpp"
-    "src/Util/Win.cpp"
+    "src/XSEPlugin/Function.cpp"
+    "src/XSEPlugin/GameSettings.cpp"
+    "src/XSEPlugin/Main.cpp"
+    "src/XSEPlugin/Util/Win.cpp"
 )
